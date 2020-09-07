@@ -1,0 +1,47 @@
+name: proxmox-i18n
+
+on:
+  push:
+    branches: 
+      - master
+  schedule:
+    - cron: 50 19 * * *
+
+jobs:
+
+  merge:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: master
+        fetch-depth: 0
+        lfs: true
+
+    - name: Set git identity
+      run : |
+        git config --global user.email "26911141+dingpengyu@users.noreply.github.com"
+        git config --global user.name "dingpengyu"
+
+    - name: Load upstream commits
+      run: git pull https://git.proxmox.com/git/proxmox-i18n.git --log --no-commit
+
+    - name: Apply commit changes
+      run: |
+        if [ -f ./.git/MERGE_MSG ]; then
+        mkdir ./tmp && cp ./.git/MERGE_MSG ./tmp/message
+        sed -i "AutoMerging: merge all proxmox-i18n upstream's changes:" ./tmp/message
+        sed -i '/^\#.*/d' ./tmp/message
+        git commit --file="./tmp/message"
+        else
+        echo "There is no merge commits."
+        fi
+
+    - name: Push Commits
+      env:
+        DOWNSTREAM_BRANCH: master
+      run: git push origin $DOWNSTREAM_BRANCH
