@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - master
+      - At-work
   schedule:
     - cron: 50 19 * * *
 
