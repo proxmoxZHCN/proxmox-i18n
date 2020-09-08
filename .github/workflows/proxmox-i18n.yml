@@ -34,7 +34,7 @@ jobs:
       run: |
         if [ -f ./.git/MERGE_MSG ]; then
         mkdir ./tmp && cp ./.git/MERGE_MSG ./tmp/message
-        sed -i "AutoMerging: merge all proxmox-i18n upstream's changes:" ./tmp/message
+        sed -i "1c [bot] AutoMerging: merge all proxmox-i18n upstream's changes:" ./tmp/message
         sed -i '/^\#.*/d' ./tmp/message
         git commit --file="./tmp/message"
         else
